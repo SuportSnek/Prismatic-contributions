@@ -1,0 +1,54 @@
+New file: Relics/GoldenEye2.java:
+
+
+package prismaticmod.relics;
+
+import theprismatic.ThePrismatic;
+import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.common.EmptyDeckShuffleAction;
+import com.megacrit.cardcrawl.actions.common.RelicAboveCreatureAction;
+import com.megacrit.cardcrawl.actions.utility.ScryAction;
+import com.megacrit.cardcrawl.core.AbstractCreature;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import static prismaticmod.BasicMod.makeID;
+
+public class GoldenEye2 extends BaseRelic {
+    private static final String NAME = "Golden Eye"; //The name will be used for determining the image file as well as the ID.
+    public static final String ID = makeID(NAME); //This adds the mod's prefix to the relic ID, resulting in modID:MyRelic
+    private static final RelicTier RARITY = RelicTier.RARE; //The relic's rarity.
+    private static final LandingSound SOUND = LandingSound.MAGICAL; //The sound played when the relic is clicked.
+
+    public GoldenEye2() {
+        super(ID, NAME, ThePrismatic.Enums.CARD_COLOR, RARITY, SOUND);
+    }
+
+    public String getUpdatedDescription() {
+        return this.DESCRIPTIONS[0] + 1 + this.DESCRIPTIONS[1];
+    }
+    public void atStartOfTurn() {
+        if (AbstractDungeon.player.drawPile.size() <= 0)
+            addToTop((AbstractGameAction)new EmptyDeckShuffleAction());
+        flash();
+        addToBot((AbstractGameAction)new ScryAction(1));
+        addToTop(new RelicAboveCreatureAction(AbstractDungeon.player, this));
+    }
+}
+
+
+
+
+Added to RelicStrings.json:
+  "${modID}:Golden Eye": {
+    "NAME": "Golden Eye",
+    "FLAVOR": "See into the mind of your future self, predicting your fate",
+    "DESCRIPTIONS": [
+      "At the start of your turn, Scry #b",
+      "."
+    ]
+  }
+
+
+In BasicMod.java:
+//Comment out line 272:
+BaseMod.addRelicToCustomPool(new GoldenEye(), CARD_COLOR);
+
