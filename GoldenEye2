@@ -37,7 +37,7 @@ public class GoldenEye2 extends BaseRelic {
 
 
 
-Added to RelicStrings.json:
+Added to Resources/prismaticmod/localization/RelicStrings.json:
   "${modID}:Golden Eye": {
     "NAME": "Golden Eye",
     "FLAVOR": "See into the mind of your future self, predicting your fate",
