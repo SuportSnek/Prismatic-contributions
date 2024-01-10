@@ -1,0 +1,75 @@
+New file: Relics/DarkStoneDoll.java:
+package prismaticmod.relics;
+
+import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
+import com.megacrit.cardcrawl.actions.common.RelicAboveCreatureAction;
+import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.AbstractCreature;
+import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.powers.AbstractPower;
+import com.megacrit.cardcrawl.powers.StrengthPower;
+import theprismatic.ThePrismatic;
+
+import static prismaticmod.BasicMod.makeID;
+
+public class DarkStoneDoll extends BaseRelic {
+    private static final String NAME = "Darkstone Doll"; //The name will be used for determining the image file as well as the ID.
+    public static final String ID = makeID(NAME); //This adds the mod's prefix to the relic ID, resulting in modID:MyRelic
+    private static final RelicTier RARITY = RelicTier.UNCOMMON; //The relic's rarity.
+    private static final LandingSound SOUND = LandingSound.SOLID; //The sound played when the relic is clicked.
+    private static final int HP_AMT = 6; //Darkstone
+    private static final int AMT = 1; //Duvu
+    public DarkStoneDoll() {
+        super(ID, NAME, ThePrismatic.Enums.CARD_COLOR, RARITY, SOUND);
+    }
+
+    public String getUpdatedDescription() {return this.DESCRIPTIONS[0] + 6 + this.DESCRIPTIONS[1] + this.DESCRIPTIONS[2] + 1 + this.DESCRIPTIONS[3];}
+
+    //Darkstone Precipate:
+    public void onObtainCard(AbstractCard card) {
+        if (card.color == AbstractCard.CardColor.CURSE) {
+            AbstractDungeon.player.increaseMaxHp(6, true);
+        }
+    }
+
+    //Duvu doll:
+
+    public void onMasterDeckChange() {
+        this.counter = 0;
+        for (AbstractCard c : AbstractDungeon.player.masterDeck.group) {
+            if (c.type == AbstractCard.CardType.CURSE)
+                this.counter++;
+        }
+    }
+
+    public void onEquip() {
+        this.counter = 0;
+        for (AbstractCard c : AbstractDungeon.player.masterDeck.group) {
+            if (c.type == AbstractCard.CardType.CURSE)
+                this.counter++;
+        }
+    }
+
+    public void atBattleStart() {
+        if (this.counter > 0) {
+            flash();
+            addToTop((AbstractGameAction)new ApplyPowerAction((AbstractCreature)AbstractDungeon.player, (AbstractCreature)AbstractDungeon.player, (AbstractPower)new StrengthPower((AbstractCreature)AbstractDungeon.player, this.counter), this.counter));
+            addToTop((AbstractGameAction)new RelicAboveCreatureAction((AbstractCreature)AbstractDungeon.player, this));
+        }
+    }
+
+}
+
+
+Added to Resources/prismaticmod/localization/RelicStrings.json:
+  "${modID}:Darkstone Doll": {
+    "NAME": "Darkstone Doll",
+    "FLAVOR": "This charm draws power from a mysterious doll, converting it's malicious energy into strength and vitality to the wearer.",
+    "DESCRIPTIONS": [
+      "Whenever you obtain a Curse, increase your Max HP by #b",
+      ".",
+      " For each Curse in your deck, start each combat with #b",
+      " additional Strength."
+    ]
+  }
